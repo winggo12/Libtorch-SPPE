@@ -1,4 +1,22 @@
+Some Update on 19/2/2020:
+If you are still using this code, there are something wrong:
+1. The model should have input (W*H) 256*320 instead of 224*224 which i have changed it in my new repo (MPPE), which making the accuracy bad.
+2. The way I use loop to calculate the keypoints requires me to convert the tensor using tensor.item() which waste a hell ton of time , consider using: (ps also written in MPPE)
 
+"                auto ft = output_tensor.flatten(2,3); //flattening
+                auto maxresult = at::max(ft,2); //find the coordinate with the highest confidence
+                auto maxid = std::get<1>(maxresult); //get the tensor                                             "
+                
+                then :
+"      for(int kpts=0;kpts<17;kpts++){
+
+        int i = 0;
+        i = (int)(maxid[personid][kpts].item().toFloat()) ;
+        max_x = (i % 64)+1;
+        max_y = (i / 64)+1;
+        coor[kpts][0] = max_x ;
+        coor[kpts][1] = max_y ;
+      }                                                                                                           " 
 This demo shows you how to build a single pose estimation algorithm using libtorch
 
 The model is trained using pytorch (Alphapose's SPPE model) , Check their github for training the model
